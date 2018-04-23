@@ -1,6 +1,12 @@
 pragma solidity ^0.4.17;
 
 contract Beaver {
+  struct ReviewGroup {
+    address[] reviewers;
+    int score;
+    mapping (address => bool) endorsements;
+  }
+
   struct Product {
     address seller;
     bytes32 name;
@@ -10,7 +16,8 @@ contract Beaver {
     // Buyers - the number of reviews an address can leave
     mapping (address => uint) buyers;
 
-    uint[] reviews;
+    address[] pendingReviewers;
+    ReviewGroup[] reviewGroups;
   }
 
   mapping (address => uint) pendingWithdrawals;
@@ -18,6 +25,7 @@ contract Beaver {
   Product[] products;
 
   event Purchased(uint productId, address buyer);
+  event GroupReady(uint productId, uint groupId);
 
   // Product Management
   function add(bytes32 name, uint price) public returns (uint) {
@@ -47,14 +55,6 @@ contract Beaver {
     return (p.seller, p.name, p.price, p.deleted);
   }
 
-  function reviewCount(uint productId) public view returns (uint) {
-    return products[productId].reviews.length;
-  }
-
-  function getReview(uint productId, uint i) public view returns (uint) {
-    return products[productId].reviews[i];
-  }
-
   // Buyer Actions
   function buy(uint productId) public payable {
     Product storage p = products[productId];
@@ -67,12 +67,39 @@ contract Beaver {
     emit Purchased(productId, msg.sender);
   }
 
-  function review(uint productId, uint score) public returns (uint) {
+  function review(uint productId) public returns (uint) {
     Product storage p = products[productId];
     require(p.buyers[msg.sender] > 0);
-    require(score <= 5); // score unsigned, so cannot be less than 0
     p.buyers[msg.sender]--;
-    return p.reviews.push(score) - 1;
+    uint reviewerId = p.pendingReviewers.push(msg.sender) - 1;
+    if (reviewerId >= 2) { // We have three reviewers
+      uint groupId = p.reviewGroups.length;
+      p.reviewGroups.length++;
+      ReviewGroup storage g = p.reviewGroups[groupId];
+      g.reviewers = p.pendingReviewers;
+      p.pendingReviewers.length = 0;
+      emit GroupReady(productId, groupId);
+    }
+    return reviewerId;
+  }
+
+  function score(uint productId, uint groupId, uint reviewerId, int _score) public {
+    Product storage p = products[productId];
+    ReviewGroup storage g = p.reviewGroups[groupId];
+    require(g.reviewers[reviewerId] == msg.sender);
+    // need to deal with malicious changes of score
+    g.score = _score;
+  }
+
+  function endorse(uint productId, uint groupId, uint reviewerId) public returns (uint) {
+    Product storage p = products[productId];
+    ReviewGroup storage g = p.reviewGroups[groupId];
+
+    // Make sure the caller is part of the MPC
+    require(g.reviewers[reviewerId] == msg.sender);
+
+    // Endorse
+    g.endorsements[msg.sender] = true;
   }
 
   // Allows withdrawal of ether held by the contract
