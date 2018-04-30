@@ -22,7 +22,7 @@ contract Beaver {
 
   mapping (address => uint) pendingWithdrawals;
 
-  Product[] products;
+  Product[] public products;
 
   event Purchased(uint productId, address buyer);
   event GroupReady(uint productId, uint groupId);
