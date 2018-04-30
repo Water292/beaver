@@ -19,11 +19,11 @@ App = {
 
   initContract: function() {
     $.getJSON('Beaver.json', function(data) {
-      var AdoptionArtifact = data;
-      App.contracts.Adoption = TruffleContract(AdoptionArtifact);
+      var BeaverArtifact = data;
+      App.contracts.Beaver = TruffleContract(BeaverArtifact);
 
       // Set the provider for our contract
-      App.contracts.Adoption.setProvider(App.web3Provider);
+      App.contracts.Beaver.setProvider(App.web3Provider);
 
       return App.loadProducts();
     });
@@ -38,13 +38,14 @@ App = {
   loadProducts: function(adopters, account) {
     var beaverInstance;
 
-    App.contracts.Adoption.deployed().then(function(instance) {
+    App.contracts.Beaver.deployed().then(function(instance) {
       beaverInstance = instance;
 
-      return beaverInstance.products.call();
-    }).then(function(products) {
-      for (i = 0; i < products.length; i++) {
-        console.log(products[i]);
+      return beaverInstance.getProductsCount.call();
+    }).then(function(count) {
+      console.log(count.toString());
+      for (i = 0; i < count; i++) {
+        console.log("hey");
         if (!products[i].deleted) {
           console.log("add this");
           //$('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
@@ -58,9 +59,10 @@ App = {
   handleAdd: function(event) {
     event.preventDefault();
 
-    var petId = parseInt($(event.target).data('id'));
+    var name = $('#name').val();
+    var price = $('#price').val();
 
-    var adoptionInstance;
+    var beaverInstance;
 
     web3.eth.getAccounts(function(error, accounts) {
       if (error) {
@@ -69,12 +71,12 @@ App = {
 
       var account = accounts[0];
 
-      App.contracts.Adoption.deployed().then(function(instance) {
-        adoptionInstance = instance;
+      App.contracts.Beaver.deployed().then(function(instance) {
+        beaverInstance = instance;
 
-        return adoptionInstance.adopt(petId, {from: account});
+        return beaverInstance.add(name, price, {from: account});
       }).then(function(result) {
-        return App.markAdopted();
+        return App.loadProducts();
       }).catch(function(err) {
         console.log(err.message);
       });

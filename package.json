@@ -14,5 +14,9 @@
   "license": "MIT",
   "devDependencies": {
     "lite-server": "^2.3.0"
+  },
+  "dependencies": {
+    "ganache-cli": "^6.1.0",
+    "truffle": "^4.1.7"
   }
 }

@@ -49,6 +49,10 @@ contract Beaver {
   }
 
   // Query
+  function getProductsCount() public view returns (uint) {
+    return products.length;
+  }
+
   function query(uint productId) public view returns (address, bytes32, uint, bool) {
     Product storage p = products[productId];
 
