@@ -89,6 +89,7 @@ contract Beaver {
     require(g.reviewers[reviewerId] == msg.sender);
     // need to deal with malicious changes of score
     g.score = _score;
+    g.endorsements[msg.sender] = true;
   }
 
   function endorse(uint productId, uint groupId, uint reviewerId) public returns (uint) {
