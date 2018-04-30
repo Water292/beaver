@@ -92,7 +92,7 @@ contract Beaver {
     g.endorsements[msg.sender] = true;
   }
 
-  function endorse(uint productId, uint groupId, uint reviewerId) public returns (uint) {
+  function endorse(uint productId, uint groupId, uint reviewerId) public {
     Product storage p = products[productId];
     ReviewGroup storage g = p.reviewGroups[groupId];
 
