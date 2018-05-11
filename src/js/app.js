@@ -33,6 +33,7 @@ App = {
 
   bindEvents: function() {
     $(document).on('click', '.btn-primary', App.handleAdd);
+    $(document).on('click', '.btn-success', App.handleBuy);
   },
 
   loadProducts: function(adopters, account) {
@@ -42,12 +43,17 @@ App = {
       beaverInstance = instance;
 
       return beaverInstance.getProductsCount.call();
-    }).then(function(count) {
-      console.log(count.toString());
+    }).then(async(count) => {
+      $('#listing').html('');
       for (i = 0; i < count; i++) {
-        console.log("hey");
-        if (!products[i].deleted) {
-          console.log("add this");
+        var q = await beaverInstance.query.call(i);
+        var owner = q[0];
+        var name = web3.toAscii(q[1]);
+        var price = web3.fromWei(q[2], "ether");
+        var deleted = q[3];
+        if (!deleted) {
+          var newRow = $('<tr><td>' + (i+1) + '</td><td>' + owner + '</td><td>' + name + '</td><td>' + price + '</td><td>0</td><td><button data-id="' + i + '" data-price="' + q[2] + '" class="btn btn-success">Buy</button></td>')
+          $('#listing').append(newRow);
           //$('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
         }
       }
@@ -56,11 +62,34 @@ App = {
     })*/;
   },
 
+  handleBuy: function(event) {
+    event.preventDefault();
+
+    var productId = parseInt($(event.target).data('id'));
+    var price = parseInt($(event.target).data('price'));
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+
+      App.contracts.Beaver.deployed().then(function(instance) {
+        return instance.buy(productId, {from: account, value: price});
+      }).then(function(result) {
+        return App.loadProducts();
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+
   handleAdd: function(event) {
     event.preventDefault();
 
     var name = $('#name').val();
-    var price = $('#price').val();
+    var price = web3.toWei($('#price').val(), "ether");
 
     var beaverInstance;
 
