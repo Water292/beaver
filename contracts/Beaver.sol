@@ -53,6 +53,10 @@ contract Beaver {
     return products.length;
   }
 
+  function getUnreviewedCount(uint productId) public view returns (uint) {
+    return products[productId].buyers[msg.sender];
+  }
+
   function query(uint productId) public view returns (address, bytes32, uint, bool) {
     Product storage p = products[productId];
 

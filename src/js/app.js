@@ -47,19 +47,22 @@ App = {
       $('#listing').html('');
       for (i = 0; i < count; i++) {
         var q = await beaverInstance.query.call(i);
-        var owner = q[0];
-        var name = web3.toAscii(q[1]);
-        var price = web3.fromWei(q[2], "ether");
-        var deleted = q[3];
+        let owner = q[0].substr(0,10);
+        let name = web3.toAscii(q[1]);
+        let price = web3.fromWei(q[2], "ether");
+        let deleted = q[3];
         if (!deleted) {
-          var newRow = $('<tr><td>' + (i+1) + '</td><td>' + owner + '</td><td>' + name + '</td><td>' + price + '</td><td>0</td><td><button data-id="' + i + '" data-price="' + q[2] + '" class="btn btn-success">Buy</button></td>')
+          let u = await beaverInstance.getUnreviewedCount(i);
+          let newRow = $('<tr><td>' + (i+1) + '</td><td>' + owner + '...</td><td>' + name + '</td><td>' +
+            price + '</td><td>0</td><td><button data-id="' + i + '" data-price="' + q[2] + '" class="btn btn-success">Buy</button>&nbsp;<button class="btn" id="review' + i + '">Review</button></td>'
+          )
           $('#listing').append(newRow);
-          //$('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
+          if (u == 0) {
+            $('#review' + i).prop('disabled', true);
+          }
         }
       }
-    })/*.catch(function(err) {
-      console.log(err.message);
-    })*/;
+    });
   },
 
   handleBuy: function(event) {

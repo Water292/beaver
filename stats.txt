@@ -1,0 +1,59 @@
+Three people
+---------------------
+Add: 104351
+Buy 1: 70573
+Buy 2: 55573
+Buy 3: 55573
+Review Interest 1: 53497
+Review Interest 2: 38497
+Review Interest 3: 103015
+Post Score: 63812
+Endorse Score 1: 43547
+Endorse Score 2: 43547
+Total: 631985
+
+Five people
+---------------------
+Add: 104351
+Buy 1: 70573
+Buy 2: 55573
+Buy 3: 55573
+Buy 4: 55573
+Buy 5: 55573
+Review Interest 1: 53497
+Review Interest 2: 38497
+Review Interest 3: 38497
+Review Interest 4: 38497
+Review Interest 5: 123663
+Post Score: 63812
+Endorse Score 1: 43547
+Endorse Score 2: 43547
+Endorse Score 3: 43547
+Endorse Score 4: 43547
+Total: 927867
+
+Seven people                                                                                                                                                                                                 [5/264]
+---------------------                                                                                                                                                                                               
+Add: 104351                                                                                                                                                                                                         
+Buy 1: 70573                                                                                                                                                                                                        
+Buy 2: 55573                                                                                                                                                                                                        
+Buy 3: 55573                                                                                                                                                                                                        
+Buy 4: 55573
+Buy 5: 55573
+Buy 6: 55573
+Buy 7: 55573
+Review Interest 1: 53497
+Review Interest 2: 38497
+Review Interest 3: 38497
+Review Interest 4: 38497
+Review Interest 5: 38497
+Review Interest 6: 38497
+Review Interest 7: 144311
+Post Score: 63812
+Endorse Score 1: 43547
+Endorse Score 2: 43547
+Endorse Score 3: 43547
+Endorse Score 4: 43547
+Endorse Score 5: 43547
+Endorse Score 6: 43547
+Total: 1223749
